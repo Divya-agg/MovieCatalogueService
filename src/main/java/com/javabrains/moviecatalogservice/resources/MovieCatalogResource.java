@@ -31,10 +31,12 @@ public class MovieCatalogResource {
         //get all rated movie ids Hard coded now
 
         UserRating ratings = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/"+userId, UserRating.class);
+        if(ratings==null) ratings = new UserRating();
         return ratings.getUserRating().stream().map(rating -> {
             //for each movie id, call movie info service and get details
             Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
             //put them all together
+            if(movie==null) movie = new Movie();
             return new CatalogItem(movie.getName(),"A rare and true love story",rating.getRating());
 
         }).collect(Collectors.toList());
